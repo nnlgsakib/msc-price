@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Toggle Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+        }
+        .box {
+            width: 45%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .token {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Token Toggle Interface</h1>
+    <div class="container">
+        <div class="box" id="allTokensBox">
+            <h2>All Tokens</h2>
+        </div>
+        <div class="box" id="enabledTokensBox">
+            <h2>Enabled Tokens</h2>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const apiURL = "https://msc-token-registry.vercel.app/";
+            
+            fetch(apiURL)
+                .then(response => response.json())
+                .then(data => {
+                    const allTokensBox = document.getElementById("allTokensBox");
+                    const enabledTokensBox = document.getElementById("enabledTokensBox");
+                    const tokens = data.data;
+
+                    Object.keys(tokens).forEach(tokenKey => {
+                        const token = tokens[tokenKey];
+                        const tokenElement = createTokenElement(token, tokenKey);
+
+                        tokenElement.querySelector("input[type=checkbox]").addEventListener("change", function() {
+                            if (this.checked) {
+                                enabledTokensBox.appendChild(tokenElement);
+                            } else {
+                                allTokensBox.appendChild(tokenElement);
+                            }
+                        });
+
+                        allTokensBox.appendChild(tokenElement);
+                    });
+                })
+                .catch(error => console.error("Error fetching the token data:", error));
+
+            function createTokenElement(token, tokenKey) {
+                const tokenDiv = document.createElement("div");
+                tokenDiv.classList.add("token");
+                tokenDiv.dataset.tokenKey = tokenKey;
+
+                const tokenInfo = document.createElement("div");
+                tokenInfo.innerHTML = `
+                    <img src="${token.LOGO}" alt="${token.NAME} logo" width="30">
+                    <span>${token.NAME} (${token.SYMBOL})</span>
+                `;
+
+                const toggle = document.createElement("input");
+                toggle.type = "checkbox";
+
+                tokenDiv.appendChild(tokenInfo);
+                tokenDiv.appendChild(toggle);
+
+                return tokenDiv;
+            }
+        });
+    </script>
+</body>
+</html>

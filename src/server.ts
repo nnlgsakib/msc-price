@@ -10,7 +10,29 @@ const PORT = 3000;
 app.use(cors());
 
 // Define a route to fetch and return the price
-app.get('/price', async (req: Request, res: Response) => {
+app.get('/price/pmind', async (req: Request, res: Response) => {
+  try {
+    const response = await axios.get(PRICE_API);
+    const price = response.data.data.new_price;
+    const change = response.data.data.change;
+    res.json({ price, change });
+  } catch (error) {
+    console.error('Error fetching price:', error);
+    res.status(500).json({ error: 'Failed to fetch price' });
+  }
+});
+app.get('/price/usdt', async (req: Request, res: Response) => {
+  try {
+    const response = await axios.get(PRICE_API);
+    const price = response.data.data.new_price;
+    const change = response.data.data.change;
+    res.json({ price, change });
+  } catch (error) {
+    console.error('Error fetching price:', error);
+    res.status(500).json({ error: 'Failed to fetch price' });
+  }
+});
+app.get('/price/musd', async (req: Request, res: Response) => {
   try {
     const response = await axios.get(PRICE_API);
     const price = response.data.data.new_price;
